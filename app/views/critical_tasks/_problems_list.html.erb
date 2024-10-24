@@ -1,0 +1,26 @@
+<% if @problematic_issues.present? %>
+  <div class="box" id="problems-list">
+    <h3><%=l(:label_problems_found)%></h3>
+
+    <% if @past_date_issues.present? %>
+      <h4><%=l(:label_past_date_issues)%></h4>
+      <ul>
+        <% @past_date_issues.each do |issue| %>
+          <li>
+            <%= link_to_issue(issue) %> -
+            <%= l(:label_final_date) %>: <%= format_date(@final_dates[issue.id]) %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <% if @empty_date_issues.present? %>
+      <h4><%=l(:label_empty_date_issues)%></h4>
+      <ul>
+        <% @empty_date_issues.each do |issue| %>
+          <li><%= link_to_issue(issue) %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+<% end %>

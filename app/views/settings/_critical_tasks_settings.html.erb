@@ -1,0 +1,34 @@
+<fieldset>
+  <legend><%=l(:critical_tasks_settings)%></legend>
+
+  <p>
+    <label><%=l(:label_custom_field)%></label>
+    <%= select_tag 'settings[custom_field_id]',
+                   options_from_collection_for_select(
+                     CustomField.where(type: 'IssueCustomField', field_format: 'bool'),
+                     :id,
+                     :name,
+                     @settings['custom_field_id']
+                   ) %>
+  </p>
+
+  <p>
+    <label><%=l(:parent_task_color)%></label>
+    <%= color_field_tag 'settings[parent_task_color]', @settings['parent_task_color'] %>
+  </p>
+
+  <p>
+    <label><%=l(:subtask_color)%></label>
+    <%= color_field_tag 'settings[subtask_color]', @settings['subtask_color'] %>
+  </p>
+
+  <p>
+    <label><%=l(:error_date_past_color)%></label>
+    <%= color_field_tag 'settings[error_date_past_color]', @settings['error_date_past_color'] %>
+  </p>
+
+  <p>
+    <label><%=l(:error_date_empty_color)%></label>
+    <%= color_field_tag 'settings[error_date_empty_color]', @settings['error_date_empty_color'] %>
+  </p>
+</fieldset>

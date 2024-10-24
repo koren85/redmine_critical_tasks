@@ -1,0 +1,123 @@
+<%= stylesheet_link_tag 'critical_tasks', plugin: 'redmine_critical_tasks' %>
+
+<%
+  parent_color = Setting.plugin_redmine_critical_tasks['parent_task_color']
+  subtask_color = Setting.plugin_redmine_critical_tasks['subtask_color']
+%>
+
+<style>
+    .tree-table tr.parent { background-color: <%= parent_color %> !important; }
+    .tree-table tr.child { background-color: <%= subtask_color %> !important; }
+</style>
+
+<h2><%=l(:critical_tasks)%></h2>
+
+<%= form_tag critical_tasks_path, method: :get do %>
+  <fieldset>
+    <legend><%=l(:label_filter_plural)%></legend>
+    <label><%=l(:field_status)%>:</label>
+    <%= select_tag 'status_ids[]',
+                   options_from_collection_for_select(@statuses, :id, :name, @selected_statuses),
+                   multiple: true,
+                   class: 'select2' %>
+    <%= submit_tag l(:button_apply), class: 'button-small' %>
+    <%= hidden_field_tag 'sort', params[:sort] if params[:sort].present? %>
+  </fieldset>
+<% end %>
+
+
+<div class="autoscroll">
+  <table class="list issues tree-table">
+    <thead>
+    <tr>
+      <th>
+        <%= sort_link 'project_id', l(:field_project), :default_order => 'asc' %>
+      </th>
+      <th><%=l(:field_parent_issue)%></th>
+      <th><%=l(:field_subject)%></th>
+      <th>
+        <%= sort_link 'status_id', l(:field_status), :default_order => 'asc' %>
+      </th>
+      <th>
+        <%= sort_link 'assigned_to_id', l(:field_assigned_to), :default_order => 'asc' %>
+      </th>
+      <th>
+        <%= sort_link 'start_date', l(:field_start_date), :default_order => 'asc' %>
+      </th>
+      <th>
+        <%= sort_link 'due_date', l(:field_due_date), :default_order => 'asc' %>
+      </th>
+      <th><%=l(:field_estimated_hours)%></th>
+      <th><%=l(:label_final_date)%></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @issues.each do |issue| %>
+      <%
+        row_color = if issue.parent_id.nil?
+                      if @issue_problems[issue.id] == :past_date
+                        Setting.plugin_redmine_critical_tasks['error_date_past_color']
+                      elsif @issue_problems[issue.id] == :empty_date
+                        Setting.plugin_redmine_critical_tasks['error_date_empty_color']
+                      else
+                        Setting.plugin_redmine_critical_tasks['parent_task_color']
+                      end
+                    else
+                      if @issue_problems[issue.id] == :past_date
+                        Setting.plugin_redmine_critical_tasks['error_date_past_color']
+                      elsif @issue_problems[issue.id] == :empty_date
+                        Setting.plugin_redmine_critical_tasks['error_date_empty_color']
+                      else
+                        Setting.plugin_redmine_critical_tasks['subtask_color']
+                      end
+                    end
+      %>
+      <tr class="<%= issue.parent_id.nil? ? 'parent' : 'child' %>" style="background-color: <%= row_color %>">
+        <td><%= issue.project.name %></td>
+        <td><%= issue.parent_id %></td>
+        <td class="subject">
+          <% if issue.parent_id.nil? %>
+            <span class="expander"></span>
+          <% else %>
+            <span class="tree-connector">└─</span>
+          <% end %>
+          <%= link_to_issue(issue) %>
+        </td>
+        <td><%= issue.status.name %></td>
+        <td><%= issue.assigned_to&.name %></td>
+        <td><%= format_date(issue.start_date) %></td>
+        <td><%= format_date(issue.due_date) %></td>
+        <td><%= issue.estimated_hours %></td>
+        <td><%=
+          final_date = if issue.parent_id.nil?
+                         @final_dates[issue.id]
+                       else
+                         @parent_final_dates[issue.parent_id]
+                       end
+          format_date(final_date) if final_date
+        %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="contextual">
+  <%= link_to l(:button_export_excel),
+              critical_tasks_path(format: :xlsx,
+                                  status_ids: @selected_statuses,
+                                  sort: params[:sort],
+                                  sort_direction: params[:sort_direction]),
+              class: 'icon icon-spreadsheet' %>
+</div>
+
+<%= render partial: 'problems_list' %>
+
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'critical_tasks', plugin: 'redmine_critical_tasks' %>
+  <%= javascript_include_tag 'critical_tasks', plugin: 'redmine_critical_tasks' %>
+<% end %>
+
+<% html_title l(:critical_tasks) %>
+
+

@@ -1,0 +1,4 @@
+# English strings go here for Rails i18n
+en:
+  critical_tasks: "Critical Tasks"
+  critical_tasks_settings: "Critical Tasks Settings"
