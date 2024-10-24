@@ -31,4 +31,20 @@
     <label><%=l(:error_date_empty_color)%></label>
     <%= color_field_tag 'settings[error_date_empty_color]', @settings['error_date_empty_color'] %>
   </p>
+
+  <p>
+    <label><%=l(:color_opacity)%></label>
+    <%= range_field_tag 'settings[color_opacity]',
+                        @settings['color_opacity'],
+                        min: 0,
+                        max: 1,
+                        step: 0.1 %>
+    <span class="opacity-value"><%= (@settings['color_opacity'].to_f * 100).to_i %>%</span>
+  </p>
 </fieldset>
+
+<script>
+    document.querySelector('input[name="settings[color_opacity]"]').addEventListener('input', function(e) {
+        document.querySelector('.opacity-value').textContent = Math.round(e.target.value * 100) + '%';
+    });
+</script>

@@ -14,3 +14,4 @@ ru:
   label_problems_found: "Найденные проблемы"
   label_past_date_issues: "Задачи с прошедшей итоговой датой"
   label_empty_date_issues: "Задачи с незаполненной итоговой датой"
+  color_opacity: "Прозрачность цветов"

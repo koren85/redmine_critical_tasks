@@ -127,3 +127,18 @@
         width: 100% !important;
     }
 }
+
+/*Также можно добавить стили для лучшей видимости проблемных задач:*/
+
+
+ .tree-table tr:hover {
+     filter: brightness(95%);
+ }
+
+.tree-table tr.parent .expander {
+    opacity: 0.8;
+}
+
+.tree-table tr.child .tree-connector {
+    opacity: 0.8;
+}

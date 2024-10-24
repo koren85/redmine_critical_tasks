@@ -1,14 +1,38 @@
 <%= stylesheet_link_tag 'critical_tasks', plugin: 'redmine_critical_tasks' %>
 
 <%
+  opacity = Setting.plugin_redmine_critical_tasks['color_opacity']
+
+  # Функция для преобразования HEX цвета в rgba
+  def hex_to_rgba(hex_color, opacity)
+    # Убираем # если он есть
+    hex_color = hex_color.gsub('#', '')
+
+    # Получаем RGB значения
+    r = hex_color[0..1].to_i(16)
+    g = hex_color[2..3].to_i(16)
+    b = hex_color[4..5].to_i(16)
+
+    "rgba(#{r}, #{g}, #{b}, #{opacity})"
+  end
+%>
+
+<style>
+    .tree-table tr.parent { background-color: <%= hex_to_rgba(Setting.plugin_redmine_critical_tasks['parent_task_color'], opacity) %> !important; }
+    .tree-table tr.child { background-color: <%= hex_to_rgba(Setting.plugin_redmine_critical_tasks['subtask_color'], opacity) %> !important; }
+    .tree-table tr.past-date { background-color: <%= hex_to_rgba(Setting.plugin_redmine_critical_tasks['error_date_past_color'], opacity) %> !important; }
+    .tree-table tr.empty-date { background-color: <%= hex_to_rgba(Setting.plugin_redmine_critical_tasks['error_date_empty_color'], opacity) %> !important; }
+</style>
+
+<%
   parent_color = Setting.plugin_redmine_critical_tasks['parent_task_color']
   subtask_color = Setting.plugin_redmine_critical_tasks['subtask_color']
 %>
 
-<style>
-    .tree-table tr.parent { background-color: <%= parent_color %> !important; }
-    .tree-table tr.child { background-color: <%= subtask_color %> !important; }
-</style>
+<!--<style>-->
+<!--    .tree-table tr.parent { background-color: <%= parent_color %> !important; }-->
+<!--    .tree-table tr.child { background-color: <%= subtask_color %> !important; }-->
+<!--</style>-->
 
 <h2><%=l(:critical_tasks)%></h2>
 
@@ -54,27 +78,16 @@
     <tbody>
     <% @issues.each do |issue| %>
       <%
-        row_color = if issue.parent_id.nil?
-                      if @issue_problems[issue.id] == :past_date
-                        Setting.plugin_redmine_critical_tasks['error_date_past_color']
-                      elsif @issue_problems[issue.id] == :empty_date
-                        Setting.plugin_redmine_critical_tasks['error_date_empty_color']
-                      else
-                        Setting.plugin_redmine_critical_tasks['parent_task_color']
-                      end
-                    else
-                      if @issue_problems[issue.id] == :past_date
-                        Setting.plugin_redmine_critical_tasks['error_date_past_color']
-                      elsif @issue_problems[issue.id] == :empty_date
-                        Setting.plugin_redmine_critical_tasks['error_date_empty_color']
-                      else
-                        Setting.plugin_redmine_critical_tasks['subtask_color']
-                      end
-                    end
+        row_classes = []
+        row_classes << (issue.parent_id.nil? ? 'parent' : 'child')
+        row_classes << 'past-date' if @issue_problems[issue.id] == :past_date
+        row_classes << 'empty-date' if @issue_problems[issue.id] == :empty_date
       %>
-      <tr class="<%= issue.parent_id.nil? ? 'parent' : 'child' %>" style="background-color: <%= row_color %>">
+      <tr class="<%= row_classes.join(' ') %>">
+
         <td><%= issue.project.name %></td>
         <td><%= issue.parent_id %></td>
+
         <td class="subject">
           <% if issue.parent_id.nil? %>
             <span class="expander"></span>

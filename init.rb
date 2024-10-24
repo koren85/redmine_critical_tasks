@@ -28,7 +28,8 @@ Redmine::Plugin.register :redmine_critical_tasks do
     'parent_task_color' => '#f0f0f0',
     'subtask_color' => '#fafafa',
     'error_date_past_color' => '#ffebee',    # светло-красный для просроченных дат
-    'error_date_empty_color' => '#fff3e0'    # светло-оранжевый для пустых дат
+    'error_date_empty_color' => '#fff3e0',    # светло-оранжевый для пустых дат
+  'color_opacity' => '0.8'  # Добавляем настройку прозрачности
   }, partial: 'settings/critical_tasks_settings'
 
   permission :view_critical_tasks, { critical_tasks: [:index] }
