@@ -43,6 +43,45 @@
   </p>
 </fieldset>
 
+<fieldset>
+  <legend><%=l(:telegram_settings)%></legend>
+
+  <p>
+    <label><%=l(:telegram_enabled)%></label>
+    <%= check_box_tag 'settings[telegram_enabled]', 1, @settings['telegram_enabled'] %>
+  </p>
+
+  <p>
+    <label><%=l(:telegram_bot_token)%></label>
+    <%= text_field_tag 'settings[telegram_bot_token]', @settings['telegram_bot_token'], size: 50 %>
+  </p>
+
+  <p>
+    <label><%=l(:responsible_custom_field)%></label>
+    <%= select_tag 'settings[responsible_custom_field_id]',
+                   options_from_collection_for_select(
+                     CustomField.where(type: 'IssueCustomField'),
+                     :id,
+                     :name,
+                     @settings['responsible_custom_field_id']
+                   ) %>
+  </p>
+
+  <p>
+    <label><%=l(:telegram_message_template)%></label>
+    <%= text_area_tag 'settings[telegram_message_template]',
+                      @settings['telegram_message_template'],
+                      rows: 10,
+                      class: 'wiki-edit',
+                      description: l(:text_telegram_template_variables) %>
+  </p>
+  <em class="info">
+    <%=l(:text_telegram_template_variables_hint)%>
+    <code>%{issue_id}</code>, <code>%{subject}</code>, <code>%{project}</code>,
+    <code>%{status}</code>, <code>%{problems}</code>, <code>%{url}</code>
+  </em>
+</fieldset>
+
 <script>
     document.querySelector('input[name="settings[color_opacity]"]').addEventListener('input', function(e) {
         document.querySelector('.opacity-value').textContent = Math.round(e.target.value * 100) + '%';

@@ -1,0 +1,23 @@
+<fieldset class="status-filter">
+  <legend><%=l(:label_filter_plural)%></legend>
+  <div class="filter-type">
+    <%= label_tag 'status_operator', l(:label_status_filter_type) %>
+    <%= select_tag 'status_operator',
+                   options_for_select(
+                     [
+                       [l(:label_status_in), '='],
+                       [l(:label_status_not_in), '!']
+                     ],
+                     params[:status_operator] || '='
+                   ),
+                   class: 'status-operator' %>
+  </div>
+
+  <div class="filter-values">
+    <label><%=l(:field_status)%>:</label>
+    <%= select_tag 'status_ids[]',
+                   options_from_collection_for_select(@statuses, :id, :name, @selected_statuses),
+                   multiple: true,
+                   class: 'select2' %>
+  </div>
+</fieldset>

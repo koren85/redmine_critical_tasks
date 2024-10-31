@@ -1,4 +1,9 @@
-<%= stylesheet_link_tag 'critical_tasks', plugin: 'redmine_critical_tasks' %>
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'critical_tasks', plugin: 'redmine_critical_tasks' %>
+  <%= javascript_include_tag 'critical_tasks', plugin: 'redmine_critical_tasks' %>
+<% end %>
+
+<%= render 'telegram_notification' %>
 
 <%
   opacity = Setting.plugin_redmine_critical_tasks['color_opacity']
@@ -36,18 +41,7 @@
 
 <h2><%=l(:critical_tasks)%></h2>
 
-<%= form_tag critical_tasks_path, method: :get do %>
-  <fieldset>
-    <legend><%=l(:label_filter_plural)%></legend>
-    <label><%=l(:field_status)%>:</label>
-    <%= select_tag 'status_ids[]',
-                   options_from_collection_for_select(@statuses, :id, :name, @selected_statuses),
-                   multiple: true,
-                   class: 'select2' %>
-    <%= submit_tag l(:button_apply), class: 'button-small' %>
-    <%= hidden_field_tag 'sort', params[:sort] if params[:sort].present? %>
-  </fieldset>
-<% end %>
+<%= render 'filters' %>
 
 
 <div class="autoscroll">
@@ -126,10 +120,7 @@
 
 <%= render partial: 'problems_list' %>
 
-<% content_for :header_tags do %>
-  <%= stylesheet_link_tag 'critical_tasks', plugin: 'redmine_critical_tasks' %>
-  <%= javascript_include_tag 'critical_tasks', plugin: 'redmine_critical_tasks' %>
-<% end %>
+
 
 <% html_title l(:critical_tasks) %>
 

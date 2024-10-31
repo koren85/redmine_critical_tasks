@@ -1,0 +1,23 @@
+<fieldset class="user-filter">
+  <legend><%=l(:label_cf_user_filter)%></legend>
+  <div class="filter-type">
+    <%= label_tag 'user_operator', l(:label_user_filter_type) %>
+    <%= select_tag 'user_operator',
+                   options_for_select(
+                     [
+                       [l(:label_user_is), '='],
+                       [l(:label_user_is_not), '!']
+                     ],
+                     params[:user_operator] || '='
+                   ),
+                   class: 'user-operator' %>
+  </div>
+
+  <div class="filter-values">
+    <label><%=l(:label_users)%>:</label>
+    <%= select_tag 'custom_field_user_ids[]',
+                   options_from_collection_for_select(@custom_field_users, :id, :name, @selected_users),
+                   multiple: true,
+                   class: 'select2' %>
+  </div>
+</fieldset>

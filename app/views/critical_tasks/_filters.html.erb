@@ -1,0 +1,11 @@
+<%= form_tag critical_tasks_path, method: :get, id: 'filters-form' do %>
+  <div class="filters">
+    <%= render 'status_filter' %>
+    <%= render 'user_filter' %>
+  </div>
+
+  <div class="filter-buttons">
+    <%= submit_tag l(:button_apply), class: 'button-small' %>
+    <%= link_to l(:button_clear), critical_tasks_path, class: 'button-clear button-small' %>
+  </div>
+<% end %>

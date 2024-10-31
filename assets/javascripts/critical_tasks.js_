@@ -1,0 +1,59 @@
+$(document).ready(function() {
+    // Инициализация select2 для статусов
+    $('.select2[name="status_ids[]"]').select2({
+        placeholder: 'Выберите статусы',
+        allowClear: true,
+        width: '300px'
+    });
+
+    // Инициализация select2 для пользователей в форме уведомлений
+    $('.select2[name="user_ids[]"]').select2({
+        placeholder: 'Выберите пользователей',
+        allowClear: true,
+        width: '300px'
+    });
+
+    // Функционал сворачивания/разворачивания
+    $('.expander').click(function() {
+        var parentRow = $(this).closest('tr');
+        var childRows = parentRow.nextUntil('tr.parent');
+        childRows.toggle();
+        $(this).toggleClass('collapsed');
+
+        // Добавляем плавную анимацию
+        $(this).css('transform', $(this).hasClass('collapsed') ? 'rotate(-90deg)' : 'rotate(0deg)');
+    });
+
+    // Hover эффект для групп задач
+    $('.tree-table tr.parent').hover(
+        function() {
+            // Применяем эффект к родительской строке и всем её подзадачам
+            $(this).css('filter', 'brightness(98%)');
+            $(this).nextUntil('tr.parent').css('filter', 'brightness(95%)');
+        },
+        function() {
+            // Убираем эффект при уходе курсора
+            $(this).css('filter', '');
+            $(this).nextUntil('tr.parent').css('filter', '');
+        }
+    );
+
+    // Сохраняем состояние выбранных статусов и пользователей
+    var statusIds = new URLSearchParams(window.location.search).getAll('status_ids[]');
+    var userIds = new URLSearchParams(window.location.search).getAll('user_ids[]');
+
+    if (statusIds.length) {
+        $('select[name="status_ids[]"]').val(statusIds).trigger('change');
+    }
+
+    if (userIds.length) {
+        $('select[name="user_ids[]"]').val(userIds).trigger('change');
+    }
+
+    // Добавляем индикатор загрузки при отправке уведомлений
+    $('#notify-form').on('submit', function() {
+        $(this).find('input[type="submit"]').prop('disabled', true)
+            .val('Отправка...');
+        return true;
+    });
+});

@@ -15,3 +15,40 @@ ru:
   label_past_date_issues: "Задачи с прошедшей итоговой датой"
   label_empty_date_issues: "Задачи с незаполненной итоговой датой"
   color_opacity: "Прозрачность цветов"
+  telegram_settings: "Настройки Telegram"
+  telegram_enabled: "Включить уведомления Telegram"
+  telegram_bot_token: "Токен Telegram бота"
+  field_telegram_id: "Telegram ID"
+  button_notify_selected: "Уведомить выбранных"
+  label_select_users: "Выберите пользователей"
+  notice_notifications_sent: "Уведомления отправлены"
+  error_sending_notifications: "Ошибка при отправке уведомлений"
+  text_telegram_template_variables: "Доступные переменные для шаблона"
+  text_telegram_template_variables_hint: "Вы можете использовать следующие переменные:"
+  responsible_custom_field: "Поле ответственного"
+  telegram_message_template: "Шаблон сообщения в Telegram"
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            telegram_id:
+              invalid_telegram_id: "должен быть числовым ID или username, начинающийся с @"
+  label_telegram_id: "Аккаунт Telegram"
+  text_telegram_id_hint: "Введите ваш Telegram ID (число) или username (например, @username)"
+
+  notice_no_notifications_sent: "Нет задач для отправки уведомлений"
+  notice_notifications_partially_sent: "Часть уведомлений (%{count}) не удалось отправить"
+
+  notice_no_matching_users_for_notifications: "Не найдены подходящие пользователи для отправки уведомлений. Проверьте, что выбранные пользователи являются ответственными за проблемные задачи и имеют настроенные Telegram ID."
+  label_empty_date_issue: "Отсутствует итоговая дата"
+  label_past_date_issue: "Просрочена итоговая дата"
+  label_status_filter_type: "Тип фильтра по статусу"
+  label_status_in: "Задачи со статусами"
+  label_status_not_in: "Задачи без статусов"
+  button_clear: "Очистить"
+  label_cf_user_filter: "Фильтр по автору изменений"
+  label_user_filter_type: "Тип фильтра по пользователю"
+  label_user_is: "Значение установил"
+  label_user_is_not: "Значение установил не"
+  label_users: "Пользователи"
