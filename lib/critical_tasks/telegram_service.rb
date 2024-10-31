@@ -1,5 +1,3 @@
-require 'telegram/bot'
-
 module CriticalTasks
   class TelegramService
     class << self
@@ -43,27 +41,30 @@ module CriticalTasks
         begin
           Rails.logger.info "Sending message to: #{telegram_id}"
 
-          # Форматируем chat_id
+          # Форматируем chat_id (убираем @ если есть)
           chat_id = telegram_id.to_s.delete('@')
 
-          success = false
+          # Экранируем специальные символы в сообщении
+          escaped_message = message.gsub('"', '\"')
 
-          # Используем точный синтаксис из примера
-          Telegram::Bot::Client.run(bot_token) do |bot|
-            begin
-              response = bot.api.send_message(
-                chat_id: chat_id,
-                text: message,
-                parse_mode: 'HTML'
-              )
-              success = true if response['ok']
-              Rails.logger.info "Message sent successfully" if success
-            rescue => e
-              Rails.logger.error "Failed to send message: #{e.message}"
-            end
+          # Формируем curl команду
+          curl_command = %Q(curl -s -X POST "https://api.telegram.org/bot#{bot_token}/sendMessage" ) +
+            %Q(-H "Content-Type: application/json" ) +
+            %Q(-d "{\\"chat_id\\":\\"#{chat_id}\\",\\"text\\":\\"#{escaped_message}\\",\\"parse_mode\\":\\"HTML\\"}")
+
+          Rails.logger.info "Executing curl command..."
+
+          # Выполняем команду
+          response = `#{curl_command}`
+          result = JSON.parse(response)
+
+          if result['ok']
+            Rails.logger.info "Message sent successfully"
+            true
+          else
+            Rails.logger.error "Telegram API error: #{result['description']}"
+            false
           end
-
-          success
         rescue => e
           Rails.logger.error "Error sending notification: #{e.message}"
           Rails.logger.error e.backtrace.join("\n")
@@ -71,19 +72,26 @@ module CriticalTasks
         end
       end
 
-      def get_updates
-        return unless telegram_enabled? && bot_token.present?
+      def test_connection
+        return false unless telegram_enabled? && bot_token.present?
 
         begin
-          Rails.logger.info "Getting updates from Telegram"
+          # Тестовый curl запрос к API
+          curl_command = %Q(curl -s "https://api.telegram.org/bot#{bot_token}/getMe")
+          response = `#{curl_command}`
+          result = JSON.parse(response)
 
-          Telegram::Bot::Client.run(bot_token) do |bot|
-            bot.api.get_updates
+          if result['ok']
+            bot_info = result['result']
+            Rails.logger.info "Connected to bot: #{bot_info['username']}"
+            true
+          else
+            Rails.logger.error "Bot connection failed: #{result['description']}"
+            false
           end
         rescue => e
-          Rails.logger.error "Error getting updates: #{e.message}"
-          Rails.logger.error e.backtrace.join("\n")
-          nil
+          Rails.logger.error "Error testing bot: #{e.message}"
+          false
         end
       end
 
