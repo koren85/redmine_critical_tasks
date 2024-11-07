@@ -2,6 +2,7 @@ require 'redmine'
 require 'rubyXL'
 require 'rubyXL/convenience_methods'
 
+require_dependency 'critical_tasks/hooks'
 require 'critical_tasks/patches/user_patch'
 require 'critical_tasks/telegram_service'
 require 'critical_tasks/hooks/views_layouts_hook'
